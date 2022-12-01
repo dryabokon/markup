@@ -6,36 +6,17 @@ import utils_kitti
 # ----------------------------------------------------------------------------------------------------------------------
 folder_out = './data/output/'
 # ----------------------------------------------------------------------------------------------------------------------
-def ex_01_coco_soccer():
-    filaname_coco_annnotation = './data/ex_01_coco_soccer/coco.json'
-    folder_images = './data/ex_01_coco_soccer/'
-    M = utils_markup_coco.Markuper(folder_out)
-    M.process_folder(filaname_coco_annnotation, folder_images)
+def ex_01_coco_local_folder():
+    filename_coco_annnotation = './data/ex_01_coco_local/coco.json'
+    folder_images = './data/ex_01_coco_local/'
+    M = utils_markup_coco.Markuper(filename_coco_annnotation,folder_out)
+    M.process_local_folder(folder_images)
     return
 # ----------------------------------------------------------------------------------------------------------------------
-def ex_01a_coco_soccer_single_image():
-    filaname_coco_annnotation = './data/ex_01_coco_soccer/coco.json'
-    folder_images = './data/ex_01_coco_soccer/'
-    filename_image = '200118_TSG_HOFFENHEIM_EINTRACHT_FRANKFURT_00050100.png'
-
-    M = utils_markup_coco.Markuper(folder_out)
-    annotation = M.get_annotation_by_filename(filaname_coco_annnotation,filename_image)
-    image = M.draw_bboxes(annotation, cv2.imread(folder_images+filename_image))
-    cv2.imwrite(folder_out+'result.png',image)
-    return
-# ----------------------------------------------------------------------------------------------------------------------
-def ex_01b_coco_polygons():
-
-    filaname_coco_annnotation = './data/ex_02_coco_polygons/person_keypoints_val2017.json'
-    filename_image = '000000425226.jpg'
-
-    M = utils_markup_coco.Markuper(folder_out)
-    annotation = M.get_annotation_by_filename(filaname_coco_annnotation,filename_image)
-    image = M.download_image_by_filename(filaname_coco_annnotation, filename_image)
-    image = M.draw_contours(annotation, image)
-
-    cv2.imwrite(folder_out + 'result.png', image)
-
+def ex_02_coco_remote():
+    filaname_coco_annnotation = './data/ex_02_coco_cloud/person_keypoints_val2017.json'
+    M = utils_markup_coco.Markuper(filaname_coco_annnotation,folder_out)
+    M.process_remote_storage()
     return
 # ----------------------------------------------------------------------------------------------------------------------
 def ex_03_kitti():
@@ -60,4 +41,5 @@ def ex_04_nuscene():
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    ex_01b_coco_polygons()
+    ex_01_coco_local_folder()
+    #ex_02_coco_remote()
