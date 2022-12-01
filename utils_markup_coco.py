@@ -1,7 +1,6 @@
 import numpy
 import cv2
 import os
-
 import pandas as pd
 import requests
 from PIL import Image as PillowImage
@@ -18,7 +17,7 @@ class Markuper:
             os.mkdir(folder_out)
 
         self.folder_out=folder_out
-        self.col_bg = (32,32,32)
+        self.col_bg = (250,250,250)
 
         self.coco = None
         self.init_by_JSON(filename_coco_annotation_json)
