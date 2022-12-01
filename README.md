@@ -1,4 +1,4 @@
 # markup
 Python backend services for annotation tool
 
-![alt text](/data/output/result.png)
+![alt text](/data/output/result.jpg)
