@@ -16,6 +16,9 @@ namespace_healthcheck = api.namespace('healthcheck/v1/', description='Healthchec
 class Healthcheck(Resource):
     def get(self):
         return 'OK'
+
+    def put(self,value):
+        return value
 # ----------------------------------------------------------------------------------------------------------------------
 namespace_mask = api.namespace('mask/v1/', description='Creation of mask from COCO annotation')
 @namespace_mask.route('/')

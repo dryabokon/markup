@@ -12,10 +12,13 @@ def ex_00a_reconvert():
     return
 # ----------------------------------------------------------------------------------------------------------------------
 def ex_00b_export():
-    folder_images = './data/ex_01_coco_soccer/'
-    filename_coco_annnotation = './data/ex_01_coco_soccer/all.json'
+    # folder_images = './data/ex_01_coco_soccer/'
+    # filename_coco_annnotation = './data/ex_01_coco_soccer/all.json'
+    folder_images = None
+    filename_coco_annnotation = './data/ex_02_coco_persons/person_keypoints_val2017.json'
+
     M = utils_markup_coco.Markuper(filename_coco_annnotation,folder_images=None,folder_out=folder_out)
-    M.reconvert_JSON(filename_coco_annnotation,'temp.json',image_id=39)
+    M.reconvert_JSON(filename_coco_annnotation,'temp.json',image_id=193181)
     M = utils_markup_coco.Markuper(folder_out+'temp.json',folder_images=folder_images,folder_out=folder_out)
     M.draw_annotations(download_images=False,skip_missing_images=False,skip_empty_annotations=False,lim=50)
     return
@@ -55,4 +58,5 @@ def ex_04_nuscene():
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    ex_02_coco_persons()
+    #ex_02_coco_persons()
+    ex_00b_export()
