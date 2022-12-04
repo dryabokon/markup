@@ -1,51 +1,63 @@
 import numpy
 import cv2
 import os
-import pandas as pd
 import requests
 from PIL import Image as PillowImage
 from pycocotools.coco import COCO
+import json
+# ----------------------------------------------------------------------------------------------------------------------
+import sys
+sys.path.append('../tools')
 # ----------------------------------------------------------------------------------------------------------------------
 import tools_draw_numpy
-import tools_DF
 import tools_image
 import tools_IO
 # ----------------------------------------------------------------------------------------------------------------------
 class Markuper:
-    def __init__(self, filename_coco_annotation_json, folder_out):
+    def __init__(self, filename_coco_annotation_json,folder_images,folder_out):
         if not os.path.isdir(folder_out):
             os.mkdir(folder_out)
 
+        self.folder_images=folder_images
         self.folder_out=folder_out
         self.col_bg = (250,250,250)
 
         self.coco = None
-        self.init_by_JSON(filename_coco_annotation_json)
+        self.import_JSON(filename_coco_annotation_json)
 
         self.colors = tools_draw_numpy.get_colors(16,colormap='tab10')
 
         return
 # ----------------------------------------------------------------------------------------------------------------------
-    def init_by_JSON(self, filename_coco_annnotation_json):
-        self.coco = COCO(filename_coco_annnotation_json)
+    def reconvert_JSON(self,filename_in,filename_out,image_id=None,tabulate=True):
 
-        self.df_images = pd.DataFrame({'id':[i['id'] for i in self.coco.dataset['images']],
-                           'file_name':[i['file_name'] for i in self.coco.dataset['images']],
-                           'coco_url': [i['coco_url'] for i in self.coco.dataset['images']],
-                           'width': [i['width'] for i in self.coco.dataset['images']],
-                           'height': [i['height'] for i in self.coco.dataset['images']]
-                           })
+        with open(filename_in, "r", encoding="utf-8") as f:
+            dct_json = json.load(f)
 
-        self.df_annotations = pd.DataFrame({'id':[a['id'] for a in self.coco.dataset['annotations']],
-                                       'image_id': [a['image_id'] for a in self.coco.dataset['annotations']],
-                                       'record_id':range(len(self.coco.dataset['annotations']))
-                                       })
+        if image_id is not None:
+            if not isinstance(image_id, list):
+                image_id = [image_id]
+            dct_json['images'] = [im for im in dct_json['images'] if im['id'] in image_id]
+            dct_json['annotations'] = [a for a in dct_json['annotations'] if a['image_id'] in image_id]
+
+        with open(self.folder_out+filename_out, "w", encoding="utf-8") as f:
+            json.dump(dct_json, f, indent=4 if tabulate else None,separators=(",", ":"))
+        return
+# ----------------------------------------------------------------------------------------------------------------------
+    def import_JSON(self, filename_coco_annnotation_json):
+        if filename_coco_annnotation_json is None:
+            self.coco = COCO()
+        elif isinstance(filename_coco_annnotation_json,str):
+            self.coco = COCO(filename_coco_annnotation_json)
+        else:
+            self.coco = COCO()
+            self.coco.dataset = filename_coco_annnotation_json
+            self.coco.createIndex()
 
         return
 # ----------------------------------------------------------------------------------------------------------------------
     def get_annotations_by_image_id(self, image_id):
-        df_annotations_f = tools_DF.apply_filter(self.df_annotations, 'image_id', image_id)
-        frame_annotations = [self.coco.dataset['annotations'][r] for r in df_annotations_f['record_id'].values]
+        frame_annotations = self.coco.loadAnns(self.coco.getAnnIds(imgIds=[image_id]))
         return frame_annotations
 # ----------------------------------------------------------------------------------------------------------------------
     def download_image_by_URL(self, URL):
@@ -67,7 +79,7 @@ class Markuper:
 
         return image
 # ----------------------------------------------------------------------------------------------------------------------
-    def draw_bboxes(self, frame_annotation, image,color):
+    def draw_bbox(self, frame_annotation, image, color):
         b = frame_annotation['bbox']
         if isinstance(b, list):
             box = b[1], b[0], b[1] + b[3], b[0] + b[2]
@@ -81,52 +93,38 @@ class Markuper:
 
         return image
 # ----------------------------------------------------------------------------------------------------------------------
-    def process_local_folder(self, folder_images):
-
-        filename_images = tools_IO.get_filenames(folder_images,'*.*')
-
-        df = self.df_images[self.df_images['file_name'].isin(filename_images)]
-
-        for r in range(df.shape[0]):
-            filename_image = df.iloc[r]['file_name']
-            image = cv2.imread(folder_images+filename_image)
-            image = tools_image.desaturate(image, level=0.9)
-            image_id = df.iloc[r]['id']
+    def draw_annotations(self, download_images=False,skip_missing_images=True,skip_empty_annotations=True,save_to_disk=True,lim=50):
+        tools_IO.remove_files(self.folder_out,list_of_masks='*.png,*.jpg,*.jpep',create=True)
+        image = None
+        cnt = 0
+        for im in self.coco.dataset['images']:
+            if cnt>lim:break
+            image_id = im['id']
+            filename_image = im['file_name']
             frame_annotations = self.get_annotations_by_image_id(image_id)
-            for i,frame_annotation in enumerate(frame_annotations):
-                image = self.draw_contour(frame_annotation, image,self.colors[i%len(self.colors)])
-
-            cv2.imwrite(self.folder_out + filename_image, image)
-        return
-# ----------------------------------------------------------------------------------------------------------------------
-    def process_remote_storage(self,download_images=False,lim=50):
-        tools_IO.remove_files(self.folder_out,create=True)
-
-        for r in range(self.df_images.shape[0]):
-            if r>lim:break
-            image_id = self.df_images.iloc[r]['id']
-            filename_image = self.df_images.iloc[r]['file_name']
-            frame_annotations = self.get_annotations_by_image_id(image_id)
-            if len(frame_annotations)==0:
+            if skip_empty_annotations and len(frame_annotations)==0:
                 continue
 
-            if download_images:
-                URL = self.df_images.iloc[r]['coco_url']
-                image = self.download_image_by_URL(URL)
+            if self.folder_images is not None and os.path.isfile(self.folder_images+filename_image):
+                image = cv2.imread(self.folder_images+filename_image)
+            elif download_images:
+                image = self.download_image_by_URL(im['coco_url'])
                 if image is not None:
                     image = tools_image.desaturate(image,level=0.9)
+            elif not skip_missing_images:
+                image = numpy.full((im['height'], im['width'], 3), self.col_bg, dtype=numpy.uint8)
             else:
-                W = self.df_images.iloc[r]['width']
-                H = self.df_images.iloc[r]['height']
-                image = numpy.full((H, W, 3), self.col_bg, dtype=numpy.uint8)
+                continue
 
             for i,frame_annotation in enumerate(frame_annotations):
                 image = self.draw_contour(frame_annotation, image,self.colors[i%len(self.colors)])
-                #image = self.draw_bboxes(frame_annotation, image,self.colors[i%len(self.colors)])
+                #image = self.draw_bbox(frame_annotation, image, self.colors[i % len(self.colors)])
 
-            cv2.imwrite(self.folder_out+filename_image,image)
+            if save_to_disk:
+                cv2.imwrite(self.folder_out+filename_image,image)
+            cnt+=1
 
-
-        return
+        return image
 # ----------------------------------------------------------------------------------------------------------------------
+
 
