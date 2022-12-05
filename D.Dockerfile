@@ -7,11 +7,11 @@ COPY requirements.txt .
 
 RUN apt-get update
 RUN apt-get install git
-RUN conda install Cython
-
+# RUN conda install Cython
 # RUN conda install pycocotools
 # RUN conda install -c "conda-forge/label/gcc7" pycocotools
-RUN pip install git+https://github.com/philferriere/cocoapi.git
+
+RUN pip install git+https://github.com/philferriere/cocoapi.git#subdirectory=PythonAPI
 RUN apt-get install libsm6 libxext6  -y
 RUN conda install -c menpo opencv
 RUN pip install -r ./requirements.txt
