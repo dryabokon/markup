@@ -3,14 +3,12 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - pycocotools
-  - flask
-  - flask-restx
   - pandas
-  - pillow
-  - requests
-  - scikit-image
-  - scipy
-  - tabulate
-  - werkzeug
-
+#  - pillow
+#  - requests
+#  - scikit-image
+#  - scipy
+#  - tabulate
+#  - pycocotools
+#  - flask
+#  - flask-restx
