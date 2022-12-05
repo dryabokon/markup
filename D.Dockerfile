@@ -6,7 +6,7 @@ COPY environment.yml .
 COPY requirements.txt .
 
 RUN apt-get update
-conda install -c "conda-forge/label/gcc7" pycocotools
+RUN conda install -c "conda-forge/label/gcc7" pycocotools
 
 # RUN pip install -r ./requirements.txt
 # RUN apt-get install libsm6 libxext6  -y
