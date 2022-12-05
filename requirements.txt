@@ -1,5 +1,3 @@
-#pycocotools
-git+https://github.com/philferriere/cocoapi.git
 pandas
 pillow
 requests
