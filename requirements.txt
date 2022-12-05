@@ -1,9 +1,9 @@
+pycocotools
 pandas
 pillow
 requests
 scikit-image
 scipy
 tabulate
-pycocotools
 flask
 flask-restx
