@@ -4,6 +4,6 @@ FROM continuumio/miniconda3
 
 COPY environment.yml .
 RUN apt-get update
-RUN conda env update --file environment.yml -y --prune
+RUN conda env update --file environment.yml --prune
 
 
