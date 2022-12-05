@@ -10,7 +10,7 @@ Python backend services for annotation tool
 ## Example of mask image:
 ![alt text](/data/media/000000193181.jpg)
 
-## Installations steps: docker env
+## Installation for docker env
 
 1. Clone sources and dependencies
 ```
@@ -30,7 +30,7 @@ sudo ./docker_buildme.sh
 ./docker_runme.sh
 ```
 
-## Installations steps: local virtual env
+## Installation for local virtual env
 
 1. Clone sources and dependencies
 ```
