@@ -21,7 +21,8 @@ git clone https://github.com/dryabokon/tools.git
 
 2. Build docker image
 ```
-./docker_buildme.sh
+chmod +x ./docker_buildme.sh
+sudo ./docker_buildme.sh
 ```
 
 3. Run desktop app inside docker
