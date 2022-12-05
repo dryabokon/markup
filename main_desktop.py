@@ -26,13 +26,13 @@ def ex_01_coco_soccer():
     folder_images = './data/ex_01_coco_soccer/'
     filename_coco_annnotation = folder_images+'all.json'
     M = utils_markup_coco.Markuper(filename_coco_annnotation,folder_images=folder_images,folder_out=folder_out)
-    M.draw_annotations(download_images=False,skip_missing_images=False,skip_empty_annotations=False,save_to_disk=True,lim=50)
+    M.draw_annotations(download_images=False,skip_missing_images=False,skip_empty_annotations=False,save_to_disk=True,lim=10)
     return
 # ----------------------------------------------------------------------------------------------------------------------
 def ex_02_coco_persons():
     filename_coco_annnotation = './data/ex_02_coco_persons/person_keypoints_val2017.json'
     M = utils_markup_coco.Markuper(filename_coco_annnotation,folder_images=None,folder_out=folder_out)
-    M.draw_annotations(download_images=True,skip_missing_images=False,skip_empty_annotations=True,save_to_disk=True,lim=50)
+    M.draw_annotations(download_images=True,skip_missing_images=False,skip_empty_annotations=True,save_to_disk=True,lim=10)
     return
 # ----------------------------------------------------------------------------------------------------------------------
 def ex_03_kitti():

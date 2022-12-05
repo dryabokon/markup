@@ -12,25 +12,29 @@ Python backend services for annotation tool
 
 ## Installations steps: docker env
 
-1. Clone dependencies
+1. Clone sources and dependencies
 ```
+git clone https://github.com/dryabokon/markup.git
+cd markup
 git clone https://github.com/dryabokon/tools.git
 ```
 
 2. Build docker image
 ```
-./buildme.sh
+./docker_buildme.sh
 ```
 
 3. Run desktop app inside docker
 ```
-./runme.sh
+./docker_runme.sh
 ```
 
 ## Installations steps: local virtual env
 
-1. Clone dependencies
+1. Clone sources and dependencies
 ```
+git clone https://github.com/dryabokon/markup.git
+cd markup
 git clone https://github.com/dryabokon/tools.git
 ```
 
@@ -43,3 +47,5 @@ pip install -r requirements.txt
 ```
 python3 main_desktop.py
 ```
+The script will source an annotation file (./data/ex_02_coco_persons/person_keypoints_val2017.json)
+and produce the mask image at the output folder (./data/output/)
