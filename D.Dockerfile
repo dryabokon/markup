@@ -1,5 +1,6 @@
 # FROM continuumio/miniconda3
-FROM python:3.9-alpine
+FROM python:3.9.15-bullseye
+
 WORKDIR /app
  
 COPY environment.yml .
