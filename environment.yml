@@ -1,4 +1,4 @@
-name: p39
+name: p39a
 channels:
   - conda-forge
   - defaults
@@ -97,3 +97,4 @@ dependencies:
     - werkzeug==2.2.2
     - zipp==3.11.0
 
+prefix: /home/rsa-key-20200330/miniconda3/envs/p39a
