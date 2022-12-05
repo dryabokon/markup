@@ -1,17 +1,18 @@
 import numpy
 import cv2
 import os
+from os import listdir
+import fnmatch
 import requests
 from PIL import Image as PillowImage
 from pycocotools.coco import COCO
 import json
 # ----------------------------------------------------------------------------------------------------------------------
 import sys
-sys.path.append('../tools')
+sys.path.append('./tools')
 # ----------------------------------------------------------------------------------------------------------------------
 import tools_draw_numpy
 import tools_image
-import tools_IO
 # ----------------------------------------------------------------------------------------------------------------------
 class Markuper:
     def __init__(self, filename_coco_annotation_json,folder_images,folder_out):
@@ -79,6 +80,33 @@ class Markuper:
 
         return image
 # ----------------------------------------------------------------------------------------------------------------------
+    def remove_files(self, path, list_of_masks='*.*', create=False):
+
+        def get_filenames(path_input, list_of_masks):
+            local_filenames = []
+            for mask in list_of_masks.split(','):
+                res = listdir(path_input)
+                if mask != '*.*':
+                    res = fnmatch.filter(res, mask)
+                local_filenames += res
+
+            return numpy.sort(numpy.array(local_filenames))
+
+        if not os.path.exists(path):
+            if create:
+                os.mkdir(path)
+            return
+
+        filenames = get_filenames(path, list_of_masks)
+        for f in filenames:
+            if os.path.isdir(path + f):
+                # shutil.rmtree(path + f)
+                continue
+            else:
+                os.remove(path + f)
+        return
+
+    # ----------------------------------------------------------------------------------------------------------------------
     def draw_bbox(self, frame_annotation, image, color):
         b = frame_annotation['bbox']
         if isinstance(b, list):
@@ -94,7 +122,7 @@ class Markuper:
         return image
 # ----------------------------------------------------------------------------------------------------------------------
     def draw_annotations(self, download_images=False,skip_missing_images=True,skip_empty_annotations=True,save_to_disk=True,lim=50):
-        tools_IO.remove_files(self.folder_out,list_of_masks='*.png,*.jpg,*.jpep',create=True)
+        self.remove_files(self.folder_out,list_of_masks='*.png,*.jpg,*.jpep',create=True)
         image = None
         cnt = 0
         for im in self.coco.dataset['images']:
@@ -111,6 +139,8 @@ class Markuper:
                 image = self.download_image_by_URL(im['coco_url'])
                 if image is not None:
                     image = tools_image.desaturate(image,level=0.9)
+                else:
+                    image = numpy.full((im['height'], im['width'], 3), self.col_bg, dtype=numpy.uint8)
             elif not skip_missing_images:
                 image = numpy.full((im['height'], im['width'], 3), self.col_bg, dtype=numpy.uint8)
             else:
