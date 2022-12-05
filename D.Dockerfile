@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN apt update
 RUN apt install git -y
 RUN apt install build-essential -y
-RUN apt install libsm6 libxext6  -y
+RUN apt install ffmpeg libsm6 libxext6 -y
 
 RUN conda install Cython
 RUN conda install -c menpo opencv
