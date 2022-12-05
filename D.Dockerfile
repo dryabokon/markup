@@ -4,6 +4,7 @@ FROM python:3.9.15-bullseye
 WORKDIR /app
  
 COPY environment.yml .
+COPY requirements.txt .
 
 RUN apt-get update
 RUN apt-get install libsm6 libxext6  -y
