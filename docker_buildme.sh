@@ -1,2 +1,1 @@
-docker system prune
-docker build -f D.Dockerfile -t conda-image-p39 .
+docker build -f D.Dockerfile -t p39-opencv-flask .
