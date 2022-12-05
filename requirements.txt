@@ -1,4 +1,5 @@
 opencv-python
+matplotlib
 pandas
 pillow
 requests
