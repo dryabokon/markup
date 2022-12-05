@@ -6,7 +6,6 @@ dependencies:
   - pycocotools
   - flask
   - flask-restx
-  - opencv-python
   - pandas
   - pillow
   - requests
