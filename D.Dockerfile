@@ -11,7 +11,7 @@ RUN conda install Cython
 
 # RUN conda install pycocotools
 # RUN conda install -c "conda-forge/label/gcc7" pycocotools
-conda install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
+RUN conda install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
 RUN apt-get install libsm6 libxext6  -y
 RUN conda install -c menpo opencv
 RUN pip install -r ./requirements.txt
