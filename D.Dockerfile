@@ -7,7 +7,7 @@ COPY requirements.txt .
 
 RUN apt-get update
 RUN apt-get install git
-RUN sudo apt install build-essential
+RUN apt install build-essential
 RUN conda install Cython
 # RUN conda install pycocotools
 # RUN conda install -c "conda-forge/label/gcc7" pycocotools
